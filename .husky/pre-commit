@@ -1,1 +1,10 @@
-npm test
+. "$(dirname "$0")/_/husky.sh"
+
+PORT=$(grep -o 'listen([0-9]*' src/main.ts | grep -o '[0-9]*')
+
+if [ "$PORT" != "3005" ]; then
+  echo "❌ Commit blocked: App port must be 3005 (current: $PORT)"
+  exit 1
+fi
+
+echo "✔ Port is 3005 — Commit allowed."
