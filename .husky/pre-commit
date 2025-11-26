@@ -1,23 +1,11 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# Read PORT from .env (if exists)
-if [ -f .env ]; then
-  PORT=$(grep "^PORT=" .env | cut -d "=" -f2)
-else
-  PORT=""
-fi
-
-# If PORT is not set in env → fallback to 3000 (same as main.ts)
-if [ -z "$PORT" ]; then
-  PORT=3000
-fi
-
-# Check final port value
-if [ "$PORT" != "3005" ]; then
+# Search for any console.log (case insensitive)
+if grep -Rni "console\.log" ./src >/dev/null 2>&1; then
   echo "❌ Commit blocked!"
-  echo "Your app port is $PORT but it must be 3005."
+  echo "console.log found in source files. Remove them before committing."
   exit 1
 fi
 
-echo "✔ PORT is 3005 — Commit allowed."
+echo "✔ No console.log found — Commit allowed."
