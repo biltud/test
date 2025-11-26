@@ -1,20 +1,23 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# Read PORT from .env
-PORT=$(grep "^PORT=" .env | cut -d "=" -f2)
-
-# If port is empty
-if [ -z "$PORT" ]; then
-  echo "❌ PORT not found in .env — Commit blocked!"
-  exit 1
+# Read PORT from .env (if exists)
+if [ -f .env ]; then
+  PORT=$(grep "^PORT=" .env | cut -d "=" -f2)
+else
+  PORT=""
 fi
 
-# Block commit if port is NOT 3005
+# If PORT is not set in env → fallback to 3000 (same as main.ts)
+if [ -z "$PORT" ]; then
+  PORT=3000
+fi
+
+# Check final port value
 if [ "$PORT" != "3005" ]; then
   echo "❌ Commit blocked!"
-  echo "Your PORT is $PORT but it must be 3005."
+  echo "Your app port is $PORT but it must be 3005."
   exit 1
 fi
-# GG
-echo "✔ PORT is 3005 — commit allowed."
+
+echo "✔ PORT is 3005 — Commit allowed."
